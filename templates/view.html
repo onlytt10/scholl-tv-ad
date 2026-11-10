@@ -1,0 +1,2 @@
+{% extends 'base.html' %}
+{% block content %}<a class="back-link" href="{{ url_for('home') }}">← 재생 목록으로</a><div class="section-heading"><h1 class="filename">{{ item.title }}</h1><span class="badge">{{ grades[item.grade] }}</span></div><section class="preview">{% if item.kind == 'image' %}<img src="{{ url_for('uploaded_file', filename=item.name) }}" alt="{{ item.title }}">{% else %}<video src="{{ url_for('uploaded_file', filename=item.name) }}" controls playsinline><p>이 브라우저에서 동영상을 재생할 수 없습니다.</p></video>{% endif %}</section>{% endblock %}

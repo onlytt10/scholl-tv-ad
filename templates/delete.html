@@ -1,0 +1,2 @@
+{% extends 'base.html' %}
+{% block content %}<section class="panel confirm-page"><h1>광고를 삭제할까요?</h1><p class="filename">{{ item.title }}</p><p class="muted">재생 목록과 저장된 파일이 함께 삭제됩니다. 삭제한 광고는 복구할 수 없어요.</p><form method="post"><input type="hidden" name="csrf" value="{{ csrf }}"><div class="dialog-actions"><a class="button subtle" href="{{ url_for('home') }}">취소</a><button class="button danger">삭제하기</button></div></form></section>{% endblock %}

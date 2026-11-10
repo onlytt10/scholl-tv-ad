@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="page-heading"><div><p class="eyebrow">SCHOOL SIGNAGE</p><h1>우리 학교 소식, 한눈에.</h1><p class="muted">광고를 추가하고, 재생 순서를 편하게 관리하세요.</p></div><a class="button primary" href="#upload">＋ 광고 추가</a></div>
+<div class="stats"><div><span>전체 광고</span><strong>{{ items|length }}<small>개</small></strong></div><div><span>이미지</span><strong>{{ image_count }}<small>개</small></strong></div><div><span>동영상</span><strong>{{ items|length - image_count }}<small>개</small></strong></div></div>
+<div class="workspace">
+<section class="panel playlist"><div class="section-heading"><div><h2>재생 목록</h2><p class="muted">위에서 아래 순서로 재생돼요.</p></div><span class="pill">이미지 5초 · 영상 끝까지</span></div>
+<div class="filters"><label class="search"><span class="sr-only">광고 이름 검색</span><input id="search" type="search" placeholder="광고 이름으로 검색" autocomplete="off"></label><label><span class="sr-only">학년 필터</span><select id="filter"><option value="any">전체 대상</option>{% for value, label in grades.items() %}<option value="{{ value }}">{{ label }}</option>{% endfor %}</select></label></div>
+<p class="helper reorder-help" id="reorder-help">왼쪽 ⠿ 손잡이를 잡고 드래그하면 순서가 바로 저장돼요.</p><p class="helper" id="reorder-status" role="status" aria-live="polite"></p>
+<span id="keyboard-help" class="sr-only">스페이스로 잡기, 위아래 방향키로 이동, Enter로 저장, Esc로 취소</span>
+<div id="playlist" data-reorder-url="{{ url_for('reorder') }}" data-csrf="{{ csrf }}">
+{% for item in items %}
+<article class="media-row" data-name="{{ item.name }}" data-title="{{ item.title }}" data-grade="{{ item.grade }}">
+<button type="button" class="drag-handle" aria-label="{{ item.title }} 순서 이동" aria-describedby="keyboard-help" aria-pressed="false"><span aria-hidden="true">⠿</span></button><span class="order">{{ item.position }}</span><a class="thumbnail" draggable="false" href="{{ url_for('view_file', filename=item.name) }}" aria-label="{{ item.title }} 미리보기">{% if item.kind == 'image' %}<img draggable="false" loading="lazy" src="{{ url_for('uploaded_file', filename=item.name) }}" alt="">{% else %}<span aria-hidden="true">▶</span>{% endif %}</a>
+<div class="file-info"><span class="badge grade-{{ item.grade }}">{{ grades[item.grade] }}</span><h3>{{ item.title }}</h3><span class="muted file-kind">{{ '이미지' if item.kind == 'image' else '동영상' }}</span></div>
+<div class="row-actions"><a class="button subtle" href="{{ url_for('view_file', filename=item.name) }}">보기</a><a class="button danger-subtle delete-trigger" data-name="{{ item.title }}" href="{{ url_for('delete_file', filename=item.name) }}">삭제</a></div>
+</article>
+{% else %}<div class="empty"><span aria-hidden="true">▧</span><h3>첫 번째 소식을 올려보세요</h3><p>이미지나 영상을 추가하면 이곳에 표시돼요.</p><a href="#upload" class="button subtle">광고 추가하기</a></div>{% endfor %}
+</div><p id="no-results" class="empty" hidden>검색 조건에 맞는 광고가 없어요.</p>
+</section>
+<aside class="sidebar"><section class="panel" id="upload"><p class="eyebrow">NEW NOTICE</p><h2>광고 추가</h2><p class="muted">어떤 학년에 보여줄지 선택해 주세요.</p><form method="post" enctype="multipart/form-data" id="upload-form"><input type="hidden" name="csrf" value="{{ csrf }}"><label class="field-label" for="grade">송출 대상</label><select id="grade" name="grade">{% for value, label in grades.items() %}<option value="{{ value }}">{{ label }}{% if value == 'all' %} · 모든 학년{% endif %}</option>{% endfor %}</select><label class="file-picker" for="file"><span class="upload-symbol" aria-hidden="true">↑</span><strong>파일을 선택해 주세요</strong><span>이미지 또는 동영상 · 최대 1GB</span><input type="file" id="file" name="file" accept=".png,.jpg,.jpeg,.webp,.mp4,.webm,.mov" required><span id="selected-file" aria-live="polite"></span></label><p class="helper">같은 이름의 파일도 기존 광고를 덮어쓰지 않고 추가돼요.</p><button class="button primary full" id="upload-button">목록에 추가</button><p id="upload-status" class="helper" role="status"></p></form></section>
+<section class="panel"><h2>TV 화면 열기</h2><p class="muted">송출할 대상을 선택하세요.</p><div class="display-links">{% for value, label in grades.items() %}<a href="{{ url_for('display', grade=value) }}" target="_blank" rel="noopener">{{ '전체 광고' if value == 'all' else label }} <span aria-hidden="true">↗</span><span class="sr-only"> 새 창</span></a>{% endfor %}</div><p class="helper">학년별 화면에는 공통 광고도 함께 나와요. 전체 광고 화면에는 모든 학년 광고가 나와요.</p></section></aside>
+</div>
+<dialog id="delete-dialog" aria-labelledby="delete-title" aria-describedby="delete-description"><div class="dialog-icon" aria-hidden="true">!</div><h2 id="delete-title">광고를 삭제할까요?</h2><p id="delete-name"></p><p class="muted" id="delete-description">재생 목록과 저장된 파일이 함께 삭제됩니다.<br>삭제한 광고는 복구할 수 없어요.</p><form method="post" id="delete-form"><input type="hidden" name="csrf" value="{{ csrf }}"><div class="dialog-actions"><button type="button" class="button subtle" id="cancel-delete" autofocus>취소</button><button class="button danger">삭제하기</button></div></form></dialog>
+{% endblock %}
