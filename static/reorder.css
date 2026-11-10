@@ -1,0 +1,9 @@
+.drag-handle{display:grid;place-items:center;flex:0 0 36px;width:36px;min-height:48px;padding:0;border:0;border-radius:8px;background:transparent;color:#8a97ad;font-size:28px;cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none}
+.drag-handle:hover:enabled{background:#edf2ff;color:#315ce7}
+.drag-handle:disabled{cursor:default}
+.media-row.dragging{position:relative;z-index:2;background:#edf2ff;box-shadow:inset 3px 0 #315ce7,0 8px 20px #233f7814;border-radius:10px;outline:1px solid #b8c9ff}
+.dragging .drag-handle{cursor:grabbing;color:#315ce7}
+.reorder-help{margin:16px 0 6px}
+#reorder-status{min-height:20px;margin:0;color:#315ce7;overflow-wrap:anywhere}
+.row-actions{flex-wrap:nowrap;max-width:none}
+@media(max-width:600px){.drag-handle{flex-basis:30px;width:30px}.media-row{gap:7px}.media-row .order{min-width:14px}.thumbnail{width:50px}}
